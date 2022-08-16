@@ -1,33 +1,21 @@
 import React from "react"
+import { useState } from 'react';
 
-const TitleContext = React.createContext('')
-
-const Title = () => {
-    return (
-        <TitleContext.Consumer>
-            {(title) => {
-                return <h1>{title}</h1>
-            }}
-        </TitleContext.Consumer>
-    )
+type CounterProps = {
+    initialValue: number
 }
 
-const Header = () => {
+const Counter = (props: CounterProps) => {
+    const {initialValue} = props
+
+    const [count, setCount] = useState(initialValue)
+
     return (
         <div>
-            <Title />
+            <p>Count: {count}</p>
+            <button onClick={() => setCount(count -1)}>-</button>
+            <button onClick={() => setCount((prevCount) => prevCount + 1)}>+</button>
         </div>
     )
 }
-
-const Page = () => {
-    const title = 'React Book'
-
-    return (
-        <TitleContext.Provider value={title}>
-            <Header />
-        </TitleContext.Provider>
-    )
-}
-
-export default Page
+export default Counter

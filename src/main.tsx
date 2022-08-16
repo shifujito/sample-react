@@ -6,6 +6,7 @@ import Hello from './components/Hello';
 import Name from './components/Name';
 import Message from './components/Message';
 import Page from './components/ContextSample';
+import Counter from './components/ContextSample';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -13,6 +14,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     {/* <Hello /> */}
     {/* <Name /> */}
     {/* <Message /> */}
-    <Page />
+    <Counter initialValue={3} />
   </React.StrictMode>
 )
