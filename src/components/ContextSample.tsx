@@ -24,7 +24,7 @@ const Page = () => {
     const title = 'React Book'
 
     return (
-        <TitleContext.Provider value="{title}">
+        <TitleContext.Provider value={title}>
             <Header />
         </TitleContext.Provider>
     )

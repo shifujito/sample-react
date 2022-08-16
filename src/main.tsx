@@ -5,6 +5,7 @@ import './index.css'
 import Hello from './components/Hello';
 import Name from './components/Name';
 import Message from './components/Message';
+import Page from './components/ContextSample';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -12,6 +13,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     {/* <Hello /> */}
     {/* <Name /> */}
     {/* <Message /> */}
-    <ContainerSample />
+    <Page />
   </React.StrictMode>
 )
