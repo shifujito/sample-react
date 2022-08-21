@@ -1,64 +1,40 @@
-import { useEffect, useState } from 'react';
+import React, { useContext } from 'react';
+// import Parent from './ContainerSample';
 
-
-const UPDATE_CYCLE = 1000
-
-const KEY_LOCAL = 'KEY_LOCAL'
-
-enum Locale {
-    US = `en-US`,
-    JP = `ja-JP`
+type User = {
+    id: number
+    name: string
 }
 
+const UserContext = React.createContext<User | null>(null)
 
-const getLocalFromString = (text: string) => {
-    switch (text) {
-        case Locale.US:
-            return Locale.US
-        case Locale.JP:
-            return Locale.JP
-        default:
-            return Locale.US
-    }
+const GrandChild = () => {
+    const user = useContext(UserContext)
+
+    return user !== null ? <p>Hello, {user.name}</p> : null
 }
 
-const Clock = () => {
-    const [timestamp, setTimestamp] = useState(new Date())
-    const [locale, setLocale] = useState(Locale.US)
-
-    // タイマーセットをするための副作用
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setTimestamp(new Date())
-        }, UPDATE_CYCLE)
-        return () => {
-            clearInterval(timer)
-        }
-    }, [])
-
-    // localstorageから値を取得する副作用
-    useEffect(() => {
-        const savedLocal = localStorage.getItem(KEY_LOCAL)
-        console.log(savedLocal)
-        if (savedLocal !== null) {
-            setLocale(getLocalFromString(savedLocal))
-        }
-    }, [])
-
-    useEffect(() => {
-        localStorage.setItem(KEY_LOCAL, locale)
-    }, [locale])
+const Child = () => {
+    const now = new Date()
 
     return (
         <div>
-            <p>
-                <span>:{timestamp.toLocaleString(locale)}</span>
-                <select value={locale} onChange={(e) => setLocale(getLocalFromString(e.target.value))}>
-                    <option value="en-US">en-US</option>
-                    <option value="ja-JP">ja-JP</option>
-                </select>
-            </p>
+            <p>Current: {now.toLocaleString ()}</p>
+            <GrandChild />
         </div>
     )
 }
-export default Clock
+
+const Parent = () => {
+    const user: User = {
+        id: 1,
+        name: 'Alice'
+    }
+
+    return (
+        <UserContext.Provider value={user}>
+            <Child />
+        </UserContext.Provider>
+    )
+}
+export default Parent
