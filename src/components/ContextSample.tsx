@@ -1,40 +1,43 @@
-import React, { useContext } from 'react';
-// import Parent from './ContainerSample';
+import { useRef, useState } from 'react';
 
-type User = {
-    id: number
-    name: string
-}
 
-const UserContext = React.createContext<User | null>(null)
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
-const GrandChild = () => {
-    const user = useContext(UserContext)
+const UPLOAD_DELAY = 5000
 
-    return user !== null ? <p>Hello, {user.name}</p> : null
-}
+const ImageUploader = () => {
+    const inputImageRef = useRef<HTMLInputElement | null>(null)
+    const fileRef = useRef<File | null>(null)
+    const [message, setMessage] = useState<string | null>('')
 
-const Child = () => {
-    const now = new Date()
+    const onClickText = () => {
+        if (inputImageRef.current !== null){
+            inputImageRef.current.click()
+        }
+    }
 
-    return (
-        <div>
-            <p>Current: {now.toLocaleString ()}</p>
-            <GrandChild />
-        </div>
-    )
-}
+    const onChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files
+        if (files !== null && files.length > 0){
+            fileRef.current = files[0]
+        }
+    }
 
-const Parent = () => {
-    const user: User = {
-        id: 1,
-        name: 'Alice'
+    const  onClickUpload = async () => {
+        if (fileRef.current !== null) {
+            await sleep(UPLOAD_DELAY)
+            setMessage(`${fileRef.current.name} has been successfully uploaded`)
+        }
     }
 
     return (
-        <UserContext.Provider value={user}>
-            <Child />
-        </UserContext.Provider>
+        <div>
+            <p style={{ textDecoration: 'underline'}} onClick={onClickText}>画像をアップロード</p>
+            <input ref={inputImageRef} type="file" accept='image/*' onChange={onChangeImage} style={{ visibility: 'hidden'}} />
+            <br />
+            <button onClick={onClickUpload}>アップロードする</button>
+            { message !== null && <p>{ message }</p>}
+        </div>
     )
 }
-export default Parent
+export default ImageUploader
