@@ -1,39 +1,64 @@
-import React, { useReducer } from "react"
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-type  Action = `DECREMENT` | `INCREMENT` | `DOUBLE` | `RESET`
 
-const reducer = (currentCount: number, action: Action) => {
-    switch (action) {
-        case `INCREMENT`:
-            return currentCount + 1
-        case `DECREMENT`:
-            return currentCount -1
-        case `DOUBLE`:
-            return currentCount * 2
-        case `RESET`:
-            return 0
+const UPDATE_CYCLE = 1000
+
+const KEY_LOCAL = 'KEY_LOCAL'
+
+enum Locale {
+    US = `en-US`,
+    JP = `ja-JP`
+}
+
+
+const getLocalFromString = (text: string) => {
+    switch (text) {
+        case Locale.US:
+            return Locale.US
+        case Locale.JP:
+            return Locale.JP
         default:
-            return currentCount
+            return Locale.US
     }
 }
 
-type CounterProps = {
-    initialValue: number
-}
+const Clock = () => {
+    const [timestamp, setTimestamp] = useState(new Date())
+    const [locale, setLocale] = useState(Locale.US)
 
-const Counter = (props: CounterProps) => {
-    const {initialValue } = props
-    const [count, dispatch] = useReducer(reducer, initialValue)
+    // タイマーセットをするための副作用
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setTimestamp(new Date())
+        }, UPDATE_CYCLE)
+        return () => {
+            clearInterval(timer)
+        }
+    }, [])
+
+    // localstorageから値を取得する副作用
+    useEffect(() => {
+        const savedLocal = localStorage.getItem(KEY_LOCAL)
+        console.log(savedLocal)
+        if (savedLocal !== null) {
+            setLocale(getLocalFromString(savedLocal))
+        }
+    }, [])
+
+    useEffect(() => {
+        localStorage.setItem(KEY_LOCAL, locale)
+    }, [locale])
 
     return (
         <div>
-            <p>Count: {count}</p>
-            <button onClick={() => dispatch('DECREMENT')}>-</button>
-            <button onClick={() => dispatch('INCREMENT')}>+</button>
-            <button onClick={() => dispatch('DOUBLE')}>x2</button>
-            <button onClick={() => dispatch('RESET')}>Reset</button>
+            <p>
+                <span>:{timestamp.toLocaleString(locale)}</span>
+                <select value={locale} onChange={(e) => setLocale(getLocalFromString(e.target.value))}>
+                    <option value="en-US">en-US</option>
+                    <option value="ja-JP">ja-JP</option>
+                </select>
+            </p>
         </div>
     )
 }
-export default Counter
+export default Clock
